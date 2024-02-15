@@ -1,0 +1,251 @@
+@font-face {
+  font-family: 'morabbavf';
+  src: url("../fonts/morabba/MorabbaVF.woff") format("woff-variations"), url("../fonts/morabba/MorabbaVF.woff") format("woff");
+  /* for the other supporting browsers */
+  font-weight: 100 900;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'iransansxv';
+  src: url("../fonts/iransans/IRANSansXV.woff") format("woff-variations"), url("../fonts/iransans/IRANSansXV.woff") format("woff");
+  /* for the other supporting browsers */
+  font-weight: 100 900;
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: iransansx;
+  src: url("../fonts/iransans/IRANSansX-Regular.woff") format("woff");
+}
+
+@font-face {
+  font-family: iransansx;
+  src: url("../fonts/iransans/IRANSansX-Bold.woff") format("woff");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: baloo;
+  font-style: normal;
+  font-weight: bold;
+  src: url("../fonts/baloo_2/Baloo2-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: baloo;
+  font-style: normal;
+  font-weight: normal;
+  src: url("../fonts/baloo_2/Baloo2-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: baloo;
+  font-style: normal;
+  font-weight: 500;
+  src: url("../fonts/baloo_2/Baloo2-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: baloo;
+  font-style: normal;
+  font-weight: 750;
+  src: url("../fonts/baloo_2/Baloo2-SemiBold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: baloo;
+  font-style: normal;
+  font-weight: 800;
+  src: url("../fonts/baloo_2/Baloo2-ExtraBold.ttf") format("truetype");
+}
+
+body {
+  font-family: iransansx !important;
+  font-feature-settings: "ss02";
+}
+
+h1, h2, h3, h4, h5, h6, input, textarea, button, select {
+  font-family: iransansx !important;
+  font-feature-settings: "ss02";
+}
+
+h1 {
+  font-weight: bold;
+}
+
+@supports (font-variation-settings: normal) {
+  body {
+    font-family: 'iransansxv' !important;
+    font-feature-settings: "ss02";
+  }
+  h1, h2, h3, h4, h5, h6, input, textarea {
+    font-family: 'iransansxv' !important;
+    font-feature-settings: "ss02";
+  }
+  .title-font {
+    font-family: 'morabbavf' !important;
+    font-feature-settings: "ss02";
+  }
+}
+
+.latin-font {
+  font-family: 'baloo' !important;
+}
+
+html {
+  font-size: 16px;
+  background: var(--background-color);
+}
+
+html body {
+  margin: 0;
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  html {
+    overflow-x: hidden !important;
+  }
+}
+
+#contract {
+  padding: 6rem 0 6rem 0;
+  width: 50%;
+  margin: auto;
+}
+
+#contract header {
+  width: 100%;
+  text-align: left;
+  border-bottom: 2px solid #C5973A;
+}
+
+#contract header img {
+  width: 30%;
+}
+
+#contract main h1 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 2rem;
+}
+
+#contract main h2 {
+  font-size: 15px;
+  margin: 0;
+  font-weight: bold;
+}
+
+#contract main p {
+  line-height: 1.8rem;
+  font-size: 0.9rem;
+  color: black;
+  text-align: justify;
+  margin: 0;
+}
+
+#contract main span {
+  line-height: 1.8rem;
+  font-size: 0.9rem;
+  color: black;
+}
+
+#contract main input {
+  border: 0;
+  padding: 0;
+}
+
+#contract main textarea {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  resize: none;
+}
+
+#contract main input:focus, #contract main textarea:focus {
+  outline: 0;
+}
+
+#contract main div.part {
+  margin-top: 1.5rem;
+}
+
+#contract main ul {
+  list-style-type: none;
+  padding-right: 0;
+  margin: 0;
+}
+
+#contract main ul li {
+  line-height: 1.8rem;
+  font-size: 0.9rem;
+  color: black;
+  text-align: justify;
+  margin: 0;
+}
+
+#contract main .sign {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+#contract main .sign .right {
+  display: flex;
+}
+
+#contract main .sign .right .text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#contract main .sign .right .text span {
+  font-size: 0.9rem;
+}
+
+#contract main .sign .right .img img {
+  width: 70%;
+}
+
+#contract main .sign .left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#contract main .sign .left span {
+  font-size: 0.9rem;
+}
+
+#contract footer {
+  margin-top: 4rem;
+  padding-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid #C5973A;
+}
+
+#contract footer div {
+  display: flex;
+  align-items: center;
+}
+
+#contract footer div p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+#contract footer div span {
+  background-color: #C5973A;
+  border-radius: 5px;
+  padding: 0.15rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+/*# sourceMappingURL=public.css.map */
