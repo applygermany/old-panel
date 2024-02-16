@@ -26,9 +26,17 @@
                     {{$invoice->user->contract_code}}
                 </td>
                 <td>
-                    {{$invoice->status === 'published'? ($invoice->invoice_title === 'receipt' ? ($invoice->payment_method === 'bank' ? $invoice->bank->account_name : '---') : '---') : '---'}}
-                    <br/>
-                    {{$invoice->status === 'published'? ($invoice->invoice_title === 'receipt' ? ($invoice->payment_method === 'bank' ? $invoice->bank->shaba_number : '') : '') : ''}}
+                    @if($invoice['bankRelation'] and $invoice['payment_method'] =='bank')
+                        {{$invoice['bankRelation']['account_name']}}
+                        <br>
+                        {{$invoice['bankRelation']['bank_name']}}-{{$invoice['bankRelation']['shaba_number']}}
+                    @else
+                        @if($invoice['payment_method'] =='bank')
+                            ثبت نشده است
+                        @else
+                            پرداخت نقدی
+                        @endif
+                    @endif
                 </td>
                 <td>{{ $invoice->status === 'published'? $invoice->invoice_type_title : 'تایید نشده' }}
                     <br/> {{$invoice->invoice}} </td>

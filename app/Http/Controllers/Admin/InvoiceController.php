@@ -29,11 +29,11 @@ class InvoiceController extends Controller
         $bankAccounts = BankAccount::where('status', 'publish')->get();
         if ($type !== 'create') {
             if ($type === 'pre-invoice') {
-                $invoices = Invoice::orderBy('confirmed_at', 'desc')->where('invoice_title', 'pre-invoice')->where('payment_at', null)->paginate(10);
+                $invoices = Invoice::orderBy('confirmed_at', 'desc')->where('invoice_title', 'pre-invoice')->where('payment_at', null)->with('bankRelation')->paginate(10);
                 $users = User::where('level', 1)->get();
                 return view('admin.financials.invoices.pre-invoice', compact('invoices', 'users', 'type', 'bankAccounts'));
             } elseif ($type === 'receipt') {
-                $invoices = Invoice::orderBy('code', 'desc')->where('invoice_title', 'receipt')->where('manager_confirmed_at', '<>', null)->paginate(10);
+                $invoices = Invoice::orderBy('code', 'desc')->where('invoice_title', 'receipt')->where('manager_confirmed_at', '<>', null)->with('bankRelation')->paginate(10);
                 $users = User::where('level', 1)->get();
                 return view('admin.financials.invoices.receipt', compact('invoices', 'users', 'type', 'bankAccounts'));
             } elseif ($type === 'confirmed') {
