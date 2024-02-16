@@ -103,7 +103,7 @@ class ApplyController extends Controller
                 $send = User::sendMail(new MailVerificationCode("admin_motivation_added", [
                     $name,
                     $motivation->id,
-                ], "admin_motivation_added"), 'arian19fm@gmail.com');
+                ], "admin_motivation_added"), 'marzie.tarighi7596@gmail.com');
                 $notif = (new Notification("admin_motivation_added", [$name, $motivation->id]))->send($admin->id);
             }
 
