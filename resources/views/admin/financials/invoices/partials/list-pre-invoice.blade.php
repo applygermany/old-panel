@@ -26,10 +26,10 @@
                     {{$invoice->user->contract_code}}
                 </td>
                 <td>
-                    @if($invoice['bankRelation'] and $invoice['payment_method'] =='bank')
-                        {{$invoice['bankRelation']['account_name']}}
-                        <br>
-                        {{$invoice['bankRelation']['bank_name']}}-{{$invoice['bankRelation']['shaba_number']}}
+                    @if($invoice['bankRelation'])
+                     {{$invoice['bankRelation']['account_name']}}
+{{--                        <br>--}}
+{{--                        {{$invoice['bankRelation']['bank_name']}}-{{$invoice['bankRelation']['shaba_number']}}--}}
                     @else
                         @if($invoice['payment_method'] =='bank')
                             ثبت نشده است
