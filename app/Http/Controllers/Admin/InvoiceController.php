@@ -24,6 +24,32 @@ use Illuminate\Support\Facades\View;
 
 class InvoiceController extends Controller
 {
+    public function adminGenerateInvoices($id){
+        $invoice = Invoice::find($id);
+        $banks = BankAccount::all();
+        $extraUniversities=null;
+        if($invoice->invoice_type=='final'){
+            $extraUniversities=UserExtraUniversity::where('user_id',$invoice->user->id)->get();
+        }
+        if ($invoice->invoice_title === 'pre-invoice') {
+            $pdf = PDF::loadView('invoice.pdfPreInvoice', [
+                'invoice' => $invoice,
+                'banks' => $banks
+            ], ['extra_universities' => $extraUniversities], [
+                'subject' => $invoice->invoice_type_title
+            ]);
+            return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
+        } else {
+
+            $pdf = PDF::loadView('newPdf', [
+                'invoice' => $invoice,
+            ], ['extra_universities' => $extraUniversities], [
+                'subject' => $invoice->invoice_type_title,
+
+            ]);
+            return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
+        }
+    }
     function invoices($type)
     {
         $bankAccounts = BankAccount::where('status', 'publish')->get();
@@ -531,7 +557,7 @@ class InvoiceController extends Controller
         }
 
         if ($request->exportInvoiceTitle === 'pre-invoice') {
-            $invoices = $invoices->where('payment_at', null)->orderBy('confirmed_at', 'DESC')->get();
+            $invoices = $invoices->where('payment_at', null)->orderBy('confirmed_at', 'DESC')->with('bankRelation')->get();
             return Excel::download(new Transactions($invoices), 'invoices.xlsx');
         } elseif ($request->exportInvoiceTitle === 'receipt') {
             if ($request->exportStartDate) {

@@ -103,7 +103,8 @@ Route::group(['middleware' => ['UserAuth']], function () {
         /************************************
          ************* Uploads **************
          ************************************/
-
+        Route::get('v1/user/getFileNameAndFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'getFileNameAndFormat']);
+        Route::get('v1/user/getDownloadByFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'downloadFiles']);
         Route::get('v1/user/uploads', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'uploads']);
         Route::get('v1/user/files', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'files']);
         Route::post('v1/user/uploadMandatoryFile', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'uploadMandatoryFile']);
@@ -193,7 +194,7 @@ Route::group(['middleware' => ['ExpertAuth']], function () {
     /************************************
      ************ Dashboard *************
      ************************************/
-
+    Route::get('v1/expert/getDownloadByFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'downloadFiles']);
     Route::post('v1/expert/changeUploadAccess', [\App\Http\Controllers\Api\V1\Expert\UserController::class, 'changeUploadAccess']);
     Route::post('v1/expert/uploadImage', [\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'uploadImage']);
     Route::post('v1/expert/changeEmailMobile', [\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'changeEmailMobile']);

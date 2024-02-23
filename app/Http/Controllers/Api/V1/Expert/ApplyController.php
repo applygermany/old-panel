@@ -41,7 +41,7 @@ class ApplyController extends Controller
         if($user->save()){
             $fullName=$user['firstname'].' '.$user['lastname'];
             try{
-                User::sendMail(new MailVerificationCode("terminate_contract",[$fullName,$request->reason,$fullName], "terminate_contract",public_path('uploads/contract/termination.pdf')), $user->email);
+                User::sendMail(new MailVerificationCode("terminate_contract",[$fullName], "terminate_contract",public_path('uploads/contracts/termination.pdf')), $user->email);
             }catch(\Exception $e){
 
             }

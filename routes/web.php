@@ -14,7 +14,9 @@ ini_set('display_errors', E_ERROR);
 error_reporting(E_ERROR);
 date_default_timezone_set("Asia/Tehran");
 //Arians Routes
+Route::get('test/arian/calcAllPrices',[\App\Http\Controllers\ArianController::class,'calcAllPrices']);
 Route::get('test/arian/reminderEmail',[\App\Http\Controllers\ArianController::class,'reminderEmail']);
+Route::get('test/arian/generatePurePdf',[\App\Http\Controllers\ArianController::class,'generatePurePdf']);
 Route::get('test/arian',[\App\Http\Controllers\ArianController::class,'test']);
 Route::get('test/arian/getUsersExel',[\App\Http\Controllers\ArianController::class,'getUsersExel']);
 Route::get('test/arian/doTheDebug/{id}',[\App\Http\Controllers\ArianController::class,'doTheDebug']);

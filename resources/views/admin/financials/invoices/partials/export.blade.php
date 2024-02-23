@@ -65,8 +65,29 @@
                 <td>{{$invoice->payment_method_title}}</td>
                 <td>{{$invoice->payment_method !== 'cash' ? ($invoice->bank->card_number === '0' ?
 ($invoice->bank->shaba_number === '0' ? $invoice->bank->card_number : $invoice->bank->shaba_number) : '') : ''}}</td>
-                <td>{{$invoice->payment_method !== 'cash' ? $invoice->bank->bank_name : ''}}</td>
-                <td>{{$invoice->payment_method !== 'cash' ? $invoice->bank->account_name : ''}}</td>
+                <td>
+                    @if($invoice['bankRelation'])
+                        {{$invoice['bankRelation']['bank_name']}}
+                    @else
+                        @if($invoice['payment_method'] =='bank')
+                            ثبت نشده است
+                        @else
+                            پرداخت نقدی
+                        @endif
+                    @endif
+                </td>
+                <td>
+                    @if($invoice['bankRelation'])
+                        {{$invoice['bankRelation']['account_name']}}
+                    @else
+                        @if($invoice['payment_method'] =='bank')
+                            ثبت نشده است
+                        @else
+                            پرداخت نقدی
+                        @endif
+                    @endif
+                </td>
+
                 <td> {{$invoice->invoice_title === 'pre-invoice' ? $invoice->different_days : $invoice->payment_at}} </td>
                 <td>{{$invoice->discount_description}}</td>
                 <td>{{$invoice->invoice_description}}</td>

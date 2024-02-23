@@ -20,6 +20,27 @@ class DashboardController extends Controller
         $this->dashboard = $dashboard;
     }
 
+    public function downloadFiles($type,$id){
+
+        $expert=auth()->guard('api')->id();
+
+        if (is_file(public_path('uploads/'.$type.'/' . $id . '.pdf'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.pdf');
+            $fileName=$id . '.pdf';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.jpg'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.jpg');
+            $fileName=$id . '.jpg';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.rar'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.rar');
+            $fileName=$id . '.rar';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.zip'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.zip');
+            $fileName=$id . '.zip';
+        }
+
+        return response()->download($file, $fileName);
+    }
+
     public function uploadImage(Request $request)
     {
         $rules = [

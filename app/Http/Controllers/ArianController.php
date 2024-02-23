@@ -14,6 +14,7 @@ use App\Models\ResumeWork;
 use App\Models\User;
 use App\Models\UserSupervisor;
 use App\Models\UserTelSupport;
+use App\Models\UserWebinar;
 use App\Providers\MyHelpers;
 use App\Providers\Notification;
 use App\Providers\SMS;
@@ -22,10 +23,41 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\ResumeMotivationIds;
 use Illuminate\Support\Facades\Http;
-
+use PDF;
 class ArianController extends Controller
 {
     //
+
+    public function calcAllPrices(){
+        UserWebinar::where('id','>=', 1577)->whereNotIn('id', function ($query) {
+            $query->select(DB::raw('MAX(id)'))
+                ->from('user_webinars')
+                ->groupBy('mobile');
+        })->delete();
+
+        $webinar=UserWebinar::where('id','>=', 1577)->get();
+        $totalPrice=0;
+        foreach ($webinar as $w){
+            $totalPrice+=$w['price'];
+        }
+        return $totalPrice .'تومان';
+    }
+    public function generatePurePdf(){
+        $invoice='';
+        $banks='';
+        $extraUniversities=null;
+        $pdf = PDF::loadView('pure-1300-contract', [
+            'invoice' => $invoice,
+            'banks' => $banks
+        ], ['extra_universities' => $extraUniversities], [
+            'subject' => 'قرارداد 1300'
+        ]);
+        return $pdf->stream(1919 . ' ' . time() . '.pdf');
+    }
+
+    public function sendSmsToWebinarUsers(){
+
+    }
 
 
     function checkEmail($name, $lastname, $sendToEmail)
