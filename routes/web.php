@@ -15,6 +15,7 @@ error_reporting(E_ERROR);
 date_default_timezone_set("Asia/Tehran");
 //Arians Routes
 Route::get('test/arian/calcAllPrices',[\App\Http\Controllers\ArianController::class,'calcAllPrices']);
+Route::get('test/arian/testWaterMarkAndPdfVersionByArian/{userId}/{id}',[\App\Http\Controllers\ArianController::class,'testWaterMarkAndPdfVersionByArian']);
 Route::get('test/arian/reminderEmail',[\App\Http\Controllers\ArianController::class,'reminderEmail']);
 Route::get('test/arian/generatePurePdf',[\App\Http\Controllers\ArianController::class,'generatePurePdf']);
 Route::get('test/arian',[\App\Http\Controllers\ArianController::class,'test']);
@@ -429,10 +430,7 @@ Route::get('logo/university/acceptance/{id}/{ua}', [
     \App\Http\Controllers\HomeController::class,
     'logoAcceptanceUniversity',
 ])->name('logoAcceptanceUniversity');
-Route::get('resume/collaboration/{id}', [
-    \App\Http\Controllers\HomeController::class,
-    'resumeCollaboration',
-])->name('resumeCollaboration');
+
 Route::get('image/webinar/{id}/{ua}', [
     \App\Http\Controllers\HomeController::class,
     'imageWebinar',
@@ -457,11 +455,7 @@ Route::get('image/accepted/acceptance/{id}/{pos}.jpg', [
     \App\Http\Controllers\HomeController::class,
     'imageAcceptance',
 ])->name('imageAcceptance');
-Route::get('uploads/madrak/{id}', [\App\Http\Controllers\HomeController::class, 'madrak'])->name('madrak');
-Route::get('uploads/userMadrak/{type}', [
-    \App\Http\Controllers\HomeController::class,
-    'userMadrak',
-])->name('userMadrak');
+
 Route::get('image/resume/{id}', [\App\Http\Controllers\HomeController::class, 'imageResume'])->name('imageResume');
 Route::get('image/comment/{id}.png', [
     \App\Http\Controllers\HomeController::class,
@@ -487,18 +481,12 @@ Route::get('motivationMainFile/{id}', [
     \App\Http\Controllers\HomeController::class,
     'motivationAdminFile',
 ])->name('motivationMainFile');
-Route::get('writerFile/{id}', [
-    \App\Http\Controllers\HomeController::class,
-    'writerFile',
-])->name('writerFile');
+
 Route::get('image/motivation/{id}', [
     \App\Http\Controllers\HomeController::class,
     'imageMotivation',
 ])->name('imageMotivation');
-Route::get('motivationUserFile/{id}', [
-    \App\Http\Controllers\HomeController::class,
-    'motivationUserFile',
-])->name('motivationUserFile');
+
 Route::get('templateImage/{id}', [\App\Http\Controllers\HomeController::class, 'templateImage'])->name('templateImage');
 Route::get('adminAttachment/resume/{id}/{pos}', [
     \App\Http\Controllers\HomeController::class,
@@ -521,7 +509,33 @@ Route:: group(['middleware' => ['CheckLogin']], function () {
         'login',
     ])->name('admin.login');
 });
-
+Route:: group([
+    'prefix' => '',
+    'middleware' => ['CheckAdmin', 'CheckAdminAccess'],
+    'namespace' => 'AuthDownloadFile',
+], function () {
+    Route::get('resume/collaboration/{id}', [
+        \App\Http\Controllers\HomeController::class,
+        'resumeCollaboration',
+    ])->name('resumeCollaboration');
+    Route::get('writerFile/{id}', [
+        \App\Http\Controllers\HomeController::class,
+        'writerFile',
+    ])->name('writerFile');
+    Route::get('motivationUserFile/{id}', [
+        \App\Http\Controllers\HomeController::class,
+        'motivationUserFile',
+    ])->name('motivationUserFile');
+    Route::get('uploads/madrak/{id}', [\App\Http\Controllers\HomeController::class, 'madrak'])->name('madrak');
+    Route::get('uploads/userMadrak/{type}', [
+        \App\Http\Controllers\HomeController::class,
+        'userMadrak',
+    ])->name('userMadrak');
+    Route::get('/contract/{id}', [
+        \App\Http\Controllers\HomeController::class,
+        'generateContract',
+    ]);
+});
 Route:: group([
     'prefix' => 'admin',
     'middleware' => ['CheckAdmin', 'CheckAdminAccess'],
@@ -954,6 +968,11 @@ Route:: group([
         \App\Http\Controllers\Admin\InvoiceController::class,
         'create',
     ])->name('admin.invoicesCreate');
+    Route::get('financials/invoices/adminGenerateInvoices/{id}', [
+        \App\Http\Controllers\Admin\InvoiceController::class,
+        'adminGenerateInvoices',
+    ])->name('admin.adminGenerateInvoices');
+
     Route::get('financials/invoices/{type}', [
         \App\Http\Controllers\Admin\InvoiceController::class,
         'invoices',
@@ -1402,18 +1421,19 @@ Route::get('/admin/downloadVotes', [
 /**
  * Generate Contract
  */
-Route::get('/contract/{id}', [
-    \App\Http\Controllers\HomeController::class,
-    'generateContract',
-]);
+
 
 /**
  * Generate invoice
  */
-Route::get('/invoice/{id}', [
+Route::get('/invoice/{id}/{hash}', [
     \App\Http\Controllers\Admin\InvoiceController::class,
     'generateInvoice',
 ])->name('admin.generateInvoice');
+Route::get('/contractUser/{id}/{hash}', [
+    \App\Http\Controllers\HomeController::class,
+    'generateContractUser',
+]);
 
 
 Route::get('/admin/import/database', [

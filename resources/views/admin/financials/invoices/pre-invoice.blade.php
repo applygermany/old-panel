@@ -151,7 +151,7 @@
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <div class="form-group float-label">
-                                            <label for="bankAccount" class="header-label">جساب بانکی </label>
+                                            <label for="bankAccount" class="header-label">حساب بانکی </label>
                                             <select name="bankAccount" id="bankAccount"
                                                     class="form-control form-select-sm" data-control="select2">
                                                 <option value="">انتخاب کنید</option>

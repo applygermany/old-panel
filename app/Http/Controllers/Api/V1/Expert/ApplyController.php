@@ -8,6 +8,7 @@ use App\Models\MotivationUniversity;
 use App\Models\Resume;
 use App\Models\ResumeMotivationIds;
 use App\Models\University;
+use App\Models\Upload;
 use App\Models\UserSupervisor;
 use App\Models\UserUniversity;
 use App\Providers\MyHelpers;
@@ -39,6 +40,7 @@ class ApplyController extends Controller
         $user->contract_code=null;
         $user->contract_open_id = null;
         if($user->save()){
+            Upload::where("user_id", $request->user_id)->where('type', 7)->delete();
             $fullName=$user['firstname'].' '.$user['lastname'];
             try{
                 User::sendMail(new MailVerificationCode("terminate_contract",[$fullName], "terminate_contract",public_path('uploads/contracts/termination.pdf')), $user->email);

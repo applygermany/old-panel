@@ -67,12 +67,10 @@ Route::group([
 
     Route::get('version/{panel}', [\App\Http\Controllers\Api\V1\SiteController::class, 'getVersion']);
     //arian apies
-
-    Route::get('downloadAll/{id}', [\App\Http\Controllers\Api\V1\Expert\DocumentController::class, 'downloadAllDocs']);
 });
 Route::group(['middleware' => ['UserAuth']], function () {
 
-
+    Route::get('v1/user/getWriterFile/{id}/{fileName}/{type}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'getWriterFile']);
     Route::group(['middleware' => ['NormalUser']], function () {
         /************************************
          ************ Acceptance ************
@@ -105,6 +103,7 @@ Route::group(['middleware' => ['UserAuth']], function () {
          ************************************/
         Route::get('v1/user/getFileNameAndFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'getFileNameAndFormat']);
         Route::get('v1/user/getDownloadByFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'downloadFiles']);
+        Route::get('v1/user/downloadPureContract/{id}',[\App\Http\Controllers\Api\V1\User\UploadController::class, 'downloadPureContract']);
         Route::get('v1/user/uploads', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'uploads']);
         Route::get('v1/user/files', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'files']);
         Route::post('v1/user/uploadMandatoryFile', [\App\Http\Controllers\Api\V1\User\UploadController::class, 'uploadMandatoryFile']);
@@ -116,6 +115,7 @@ Route::group(['middleware' => ['UserAuth']], function () {
      ************************************/
 
     Route::get('v1/user/dashboard', [\App\Http\Controllers\Api\V1\User\DashboardController::class, 'dashboard']);
+    Route::post('v1/user/generateHashCode', [\App\Http\Controllers\Api\V1\User\DashboardController::class, 'generateHashCode']);
     Route::post('v1/user/updateProfile', [\App\Http\Controllers\Api\V1\User\DashboardController::class, 'updateProfile']);
     Route::post('v1/user/uploadImage', [\App\Http\Controllers\Api\V1\User\DashboardController::class, 'uploadImage']);
     Route::post('v1/user/changeEmailMobile', [\App\Http\Controllers\Api\V1\User\DashboardController::class, 'changeEmailMobile']);
@@ -194,6 +194,8 @@ Route::group(['middleware' => ['ExpertAuth']], function () {
     /************************************
      ************ Dashboard *************
      ************************************/
+    Route::get('v1/expert/getWriterFile/{id}',[\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'getWriterFile']);
+    Route::get('v1/expert/getFileNameAndFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'getFileNameAndFormat']);
     Route::get('v1/expert/getDownloadByFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'downloadFiles']);
     Route::post('v1/expert/changeUploadAccess', [\App\Http\Controllers\Api\V1\Expert\UserController::class, 'changeUploadAccess']);
     Route::post('v1/expert/uploadImage', [\App\Http\Controllers\Api\V1\Expert\DashboardController::class, 'uploadImage']);
@@ -313,6 +315,9 @@ Route::group(['middleware' => ['ExpertAuth']], function () {
 });
 
 Route::group(['middleware' => ['WriterAuth']], function () {
+    Route::get('v1/writer/getWriterFile/{id}',[\App\Http\Controllers\Api\V1\Writer\DashboardController::class, 'getWriterFile']);
+    Route::get('v1/writer/getFileNameAndFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\Writer\DashboardController::class, 'getFileNameAndFormat']);
+    Route::get('v1/writer/getDownloadByFormat/{type}/{id}',[\App\Http\Controllers\Api\V1\Writer\DashboardController::class, 'downloadFiles']);
     Route::post('v1/writer/dashboard', [\App\Http\Controllers\Api\V1\Writer\DashboardController::class, 'index']);
     Route::get('v1/writer/changeDarkMode', [\App\Http\Controllers\Api\V1\Writer\DashboardController::class, 'changeDarkMode']);
 

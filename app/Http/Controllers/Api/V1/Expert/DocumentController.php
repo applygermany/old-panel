@@ -7,6 +7,7 @@ use App\Http\Resources\Expert\UserDocumentCollection;
 use App\Http\Resources\Expert\UserResource;
 use App\Http\Services\V1\Expert\DocumentService;
 use App\Mail\MailVerificationCode;
+use App\Models\GenerateCode;
 use App\Models\Motivation;
 use App\Models\Resume;
 use App\Models\Upload;
@@ -195,14 +196,29 @@ class DocumentController extends Controller
     public function getDocument(User $user)
     {
         $documents = $this->documentService->getDocument($user);
-
+        $generateCode=GenerateCode::where('user_id',0)->first();
+        $timeCheck=$generateCode->expire_time+86400;
+        if(!isset($generateCode->expire_time) or $timeCheck < time()){
+            $generateCode->expire_time=time();
+            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            $code = substr(str_shuffle($characters), 0, 5);
+            $generateCode->generated_code=$code;
+            $generateCode->save();
+            $emails=explode(',',$generateCode->emails);
+            foreach ($emails as $email){
+                User::sendMail(new MailVerificationCode("generated_code", [
+                    $generateCode->generated_code
+                ], "generated_code"), $email);
+            }
+        }
         if ($documents){
             return response([
                 'status' => 1,
                 'msg' => 'مدارک کاربر',
                 'documents' => new UserDocumentCollection($documents[0]),
                 'user' => new UserResource($user),
-                'importantFilesThatNotExist'=>$documents[1]
+                'importantFilesThatNotExist'=>$documents[1],
+                'tokenDownloadAll'=>$generateCode->generated_code,
             ]);
         }else{
             return response([

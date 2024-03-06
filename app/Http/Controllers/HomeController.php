@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Acceptance;
+use App\Models\GenerateCode;
 use App\Models\Invoice;
 use App\Models\Pricing;
 use App\Models\Upload;
@@ -299,6 +300,7 @@ class HomeController extends Controller
 
     function madrak($id)
     {
+        return 'یافت نشد';
         if (is_file(public_path('uploads/madarek/' . $id . '.pdf'))) {
             $file = public_path('uploads/madarek/' . $id . '.pdf');
         } elseif (is_file(public_path('uploads/madarek/' . $id . '.jpg'))) {
@@ -480,6 +482,105 @@ class HomeController extends Controller
             $duty->status = 2;
             $duty->save();
         }
+    }
+
+    function generateContractUser($id,$hash){
+        $user = User::find($id);
+        $generatedCode=GenerateCode::where([['user_id',$id],['generated_code',$hash]])->first();
+        if(isset($generatedCode)) {
+            $generatedCode->delete();
+            $acceptance = Acceptance::where('user_Id', $id)->first();
+            if ($user->type === 2) {
+
+                if ($user->contract_type === 'gov-university') {
+                    $pdf = PDF::loadView('contract.gov-university.1000', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 1000 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'all-university') {
+                    $pdf = PDF::loadView('contract.all-university.1000', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 1000 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'pri-university') {
+                    if($user->id==26339){
+                        $pdf = PDF::loadView('contract.pri-university.old-1000', [
+                            'user' => $user,
+                            'acceptance' => $acceptance
+                        ], [], [
+                            'subject' => $user->id . 'قرارداد 1000 یورو ',
+                        ]);
+                    }else{
+                        $pdf = PDF::loadView('contract.pri-university.1000', [
+                            'user' => $user,
+                            'acceptance' => $acceptance
+                        ], [], [
+                            'subject' => $user->id . 'قرارداد 1000 یورو ',
+                        ]);
+                    }
+
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'pre-pay') {
+                    $pdf = PDF::loadView('contract.pre-pay.1000', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 1000 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'os-contract') {
+
+                } elseif ($user->contract_type === 'work-contract') {
+
+                }
+
+            } else {
+                if ($user->contract_type === 'gov-university') {
+                    $pdf = PDF::loadView('contract.gov-university.800', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 800 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'all-university') {
+                    $pdf = PDF::loadView('contract.all-university.800', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 800 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'pri-university') {
+                    $pdf = PDF::loadView('contract.pri-university.800', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 800 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'pre-pay') {
+                    $pdf = PDF::loadView('contract.pre-pay.800', [
+                        'user' => $user,
+                        'acceptance' => $acceptance
+                    ], [], [
+                        'subject' => $user->id . 'قرارداد 800 یورو ',
+                    ]);
+                    return $pdf->stream($user->id . ' ' . $acceptance->created_at . '.pdf');
+                } elseif ($user->contract_type === 'os-contract') {
+
+                } elseif ($user->contract_type === 'work-contract') {
+
+                }
+            }
+        }
+
     }
 
     function generateContract($id)

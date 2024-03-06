@@ -49,7 +49,7 @@
                     {{$invoice->status === 'published'? ($invoice->invoice_title === 'pre-invoice' && $invoice->payment_at === null ? $invoice->different_days : $invoice->payment_at) : '---'}} </td>
                 <td>
                     <a class="btn btn-info btn-sm" target="_blank"
-                       href="{{ route('admin.generateInvoice',['id'=>$invoice->id]) }}">دانلود</a>
+                       href="{{ route('admin.generateInvoice',['id'=>$invoice->id,'hash'=>$token->generated_code]) }}">دانلود</a>
                     @if($invoice->user_id === 0)
                         <a class="btn btn-primary btn-sm updateUser"
                            data-href="{{ route('admin.editInvoiceUser',['id'=>$invoice->id]) }}">ویرایش کاربر</a>

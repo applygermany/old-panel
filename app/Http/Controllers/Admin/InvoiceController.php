@@ -6,6 +6,7 @@ use App\ExcelExports\Transactions;
 use App\Http\Controllers\Controller;
 use App\Mail\MailVerificationCode;
 use App\Models\BankAccount;
+use App\Models\GenerateCode;
 use App\Models\Invoice;
 use App\Models\Off;
 use App\Models\Transaction;
@@ -53,22 +54,23 @@ class InvoiceController extends Controller
     function invoices($type)
     {
         $bankAccounts = BankAccount::where('status', 'publish')->get();
+        $token=GenerateCode::where('user_id',0)->first();
         if ($type !== 'create') {
             if ($type === 'pre-invoice') {
                 $invoices = Invoice::orderBy('confirmed_at', 'desc')->where('invoice_title', 'pre-invoice')->where('payment_at', null)->with('bankRelation')->paginate(10);
                 $users = User::where('level', 1)->get();
-                return view('admin.financials.invoices.pre-invoice', compact('invoices', 'users', 'type', 'bankAccounts'));
+                return view('admin.financials.invoices.pre-invoice', compact('invoices', 'users', 'type', 'bankAccounts','token'));
             } elseif ($type === 'receipt') {
                 $invoices = Invoice::orderBy('code', 'desc')->where('invoice_title', 'receipt')->where('manager_confirmed_at', '<>', null)->with('bankRelation')->paginate(10);
                 $users = User::where('level', 1)->get();
-                return view('admin.financials.invoices.receipt', compact('invoices', 'users', 'type', 'bankAccounts'));
+                return view('admin.financials.invoices.receipt', compact('invoices', 'users', 'type', 'bankAccounts','token'));
             } elseif ($type === 'confirmed') {
                 $invoices = Invoice::orderBy('code', 'desc')->where('status', 'published')
                     ->where('payment_at', '<>', null)
                     ->where('manager_confirmed_at', null)->with('bankRelation')->paginate(10);
                 $users = User::where('level', 1)->get();
                 $type = 'confirmed';
-                return view('admin.financials.invoices.confirmed', compact('invoices', 'users', 'type', 'bankAccounts'));
+                return view('admin.financials.invoices.confirmed', compact('invoices', 'users', 'type', 'bankAccounts','token'));
             }
         } else {
             return view('admin.financials.invoices.create');
@@ -469,32 +471,42 @@ class InvoiceController extends Controller
 
     }
 
-    function generateInvoice($id)
+    function generateInvoice($id,$hash)
     {
         $invoice = Invoice::find($id);
-        $banks = BankAccount::all();
-        $extraUniversities=null;
-        if($invoice->invoice_type=='final'){
-            $extraUniversities=UserExtraUniversity::where('user_id',$invoice->user->id)->get();
-        }
-        if ($invoice->invoice_title === 'pre-invoice') {
-            $pdf = PDF::loadView('invoice.pdfPreInvoice', [
-                'invoice' => $invoice,
-                'banks' => $banks
-            ], ['extra_universities' => $extraUniversities], [
-                'subject' => $invoice->invoice_type_title
-            ]);
-            return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
-        } else {
+        $generatedCode=GenerateCode::where([['user_id',$invoice['user_id']],['generated_code',$hash]])->first();
+        $adminToken=GenerateCode::where('user_id',0)->first()->generated_code;
+        if(isset($generatedCode) or $adminToken==$hash){
+            if(isset($generatedCode)){
+                $generatedCode->delete();
+            }
+            $banks = BankAccount::all();
+            $extraUniversities=null;
+            if($invoice->invoice_type=='final'){
+                $extraUniversities=UserExtraUniversity::where('user_id',$invoice->user->id)->get();
+            }
+            if ($invoice->invoice_title === 'pre-invoice') {
+                $pdf = PDF::loadView('invoice.pdfPreInvoice', [
+                    'invoice' => $invoice,
+                    'banks' => $banks
+                ], ['extra_universities' => $extraUniversities], [
+                    'subject' => $invoice->invoice_type_title
+                ]);
+                return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
+            } else {
 
-            $pdf = PDF::loadView('newPdf', [
-                'invoice' => $invoice,
-            ], ['extra_universities' => $extraUniversities], [
-                'subject' => $invoice->invoice_type_title,
+                $pdf = PDF::loadView('newPdf', [
+                    'invoice' => $invoice,
+                ], ['extra_universities' => $extraUniversities], [
+                    'subject' => $invoice->invoice_type_title,
 
-            ]);
-            return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
+                ]);
+                return $pdf->stream($invoice->id . ' ' . $invoice->created_at . '.pdf');
+            }
+        }else{
+            return 'شما اجازه دسترسی به این فایل را ندارید، لطفاً از پنل کاربری خود مجدداً تلاش کنید';
         }
+
     }
 
     function exportInvoice(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
+use App\Models\GenerateCode;
 use App\Models\Option;
 use App\Models\UserDuty;
 use App\Models\Votes;
@@ -100,6 +101,18 @@ class DashboardController extends Controller
             'users' => $inviteUsers,
             'invites' => $invitingState,
         ]);
+    }
+
+    public function generateHashCode(Request $request)
+    {
+        GenerateCode::where('user_id', auth()->guard('api')->user()->id)->delete();
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $code = substr(str_shuffle($characters), 0, 5);
+        $generateCode = new GenerateCode();
+        $generateCode->generated_code = $code;
+        $generateCode->user_id = auth()->guard('api')->user()->id;
+        $generateCode->save();
+        return $generateCode->generated_code;
     }
 
     public function updateProfile(Request $request)
@@ -282,7 +295,7 @@ class DashboardController extends Controller
         $duty->status = 3;
         if ($duty->save()) {
 
-            if(isset($request->timestamp)) {
+            if (isset($request->timestamp)) {
                 $client = new \GuzzleHttp\Client();
                 try {
                     $res = $client->request("POST", "https://chat.applygermany.net/deletenotification", [

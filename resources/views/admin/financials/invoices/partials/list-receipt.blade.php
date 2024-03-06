@@ -49,7 +49,7 @@
                 </td>
                 <td>
                     <a class="btn btn-info btn-sm" target="_blank"
-                       href="{{ route('admin.generateInvoice',['id'=>$invoice->id]) }}">دانلود</a>
+                       href="{{ route('admin.generateInvoice',['id'=>$invoice->id,'hash'=>$token->generated_code]) }}">دانلود</a>
 
                     <a class="btn btn-warning btn-sm showInvoice"
                        data-href="{{ route('admin.showInvoice',['id'=>$invoice->id]) }}">مشاهده</a>

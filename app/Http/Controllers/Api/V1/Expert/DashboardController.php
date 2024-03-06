@@ -20,6 +20,36 @@ class DashboardController extends Controller
         $this->dashboard = $dashboard;
     }
 
+    public function getWriterFile($id){
+        if (is_file(public_path('uploads/WriterFile/' . $id)))
+            $file = public_path('uploads/WriterFile/' . $id);
+        else
+            return 'فایل یافت نشد';
+        header('Content-Type:' . mime_content_type($file));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-Length: ' . filesize($file));
+
+        return response()->download($file);
+    }
+    public function getFileNameAndFormat($type,$id){
+        if (is_file(public_path('uploads/'.$type.'/' . $id . '.pdf'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.pdf');
+            $fileName=$id . '.pdf';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.jpg'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.jpg');
+            $fileName=$id . '.jpg';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.rar'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.rar');
+            $fileName=$id . '.rar';
+        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.zip'))) {
+            $file = public_path('uploads/'.$type.'/' . $id . '.zip');
+            $fileName=$id.'.zip';
+        }else{
+            return ['status'=>0,'msg'=>'فایل مورد نظر وجود ندارد','fileName'=>null];
+        }
+        return ['status'=>1,'msg'=>'فرایند دانلود شروع شد','fileName'=>$fileName];
+    }
+
     public function downloadFiles($type,$id){
 
         $expert=auth()->guard('api')->id();

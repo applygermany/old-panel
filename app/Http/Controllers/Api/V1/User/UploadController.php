@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api\V1\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\V1\User\UploadService;
+use App\Models\Motivation;
 use App\Models\Option;
+use App\Models\Resume;
+use App\Models\Upload;
 use App\Models\UploadTitle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,44 +21,77 @@ class UploadController extends Controller
         $this->upload = $upload;
     }
 
-    public function getFileNameAndFormat($type,$id){
-
-        if (is_file(public_path('uploads/'.$type.'/' . $id . '.pdf'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.pdf');
-            $fileName=$id . '.pdf';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.jpg'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.jpg');
-            $fileName=$id . '.jpg';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.rar'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.rar');
-            $fileName=$id . '.rar';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.zip'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.zip');
-            $fileName=$id.'.zip';
-        }else{
-            return false;
+    public function getWriterFile($id,$fileName,$type){
+        if($type=='motivation'){
+            $check=Motivation::where([['id',$id],['user_id',auth()->guard('api')->id()]])->first();
+        }elseif ($type=='resume'){
+            $check=Resume::where([['id',$id],['user_id',auth()->guard('api')->id()]])->first();
         }
-        return $fileName;
+        if(isset($check)){
+            if (is_file(public_path('uploads/WriterFile/' . $fileName)))
+                $file = public_path('uploads/WriterFile/' . $fileName);
+            else
+                return 'فایل یافت نشد';
+            header('Content-Type:' . mime_content_type($file));
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Content-Length: ' . filesize($file));
+
+            return response()->download($file);
+        }else{
+            return 'شما اجازه دسترسی به این فایل را ندارید';
+        }
+
+    }
+    public function getFileNameAndFormat($type,$id){
+        if(Upload::where('id',$id)->first()->user_id != auth()->guard('api')->id()){
+            return ['status'=>0,'msg'=>'شما اجازه دسترسی به این فایل را ندارید','fileName'=>null];
+        }else{
+            if (is_file(public_path('uploads/'.$type.'/' . $id . '.pdf'))) {
+                $file = public_path('uploads/'.$type.'/' . $id . '.pdf');
+                $fileName=$id . '.pdf';
+            } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.jpg'))) {
+                $file = public_path('uploads/'.$type.'/' . $id . '.jpg');
+                $fileName=$id . '.jpg';
+            } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.rar'))) {
+                $file = public_path('uploads/'.$type.'/' . $id . '.rar');
+                $fileName=$id . '.rar';
+            } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.zip'))) {
+                $file = public_path('uploads/'.$type.'/' . $id . '.zip');
+                $fileName=$id.'.zip';
+            }else{
+                return ['status'=>0,'msg'=>'فایل مورد نظر وجود ندارد','fileName'=>null];
+            }
+            return ['status'=>1,'msg'=>'فرایند دانلود شروع شد','fileName'=>$fileName];
+        }
+
     }
 
     public function downloadFiles($type,$id){
 
-        $expert=auth()->guard('api')->id();
+        if(Upload::where('id',$id)->first()->user_id != auth()->guard('api')->id()){
+            return ['status'=>0,'msg'=>'شما اجازه دسترسی به این فایل را ندارید','fileName'=>null];
+        }else {
+            if (is_file(public_path('uploads/' . $type . '/' . $id . '.pdf'))) {
+                $file = public_path('uploads/' . $type . '/' . $id . '.pdf');
+                $fileName = $id . '.pdf';
+            } elseif (is_file(public_path('uploads/' . $type . '/' . $id . '.jpg'))) {
+                $file = public_path('uploads/' . $type . '/' . $id . '.jpg');
+                $fileName = $id . '.jpg';
+            } elseif (is_file(public_path('uploads/' . $type . '/' . $id . '.rar'))) {
+                $file = public_path('uploads/' . $type . '/' . $id . '.rar');
+                $fileName = $id . '.rar';
+            } elseif (is_file(public_path('uploads/' . $type . '/' . $id . '.zip'))) {
+                $file = public_path('uploads/' . $type . '/' . $id . '.zip');
+                $fileName = $id . '.zip';
+            }
+            return response()->download($file, $fileName);
 
-        if (is_file(public_path('uploads/'.$type.'/' . $id . '.pdf'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.pdf');
-            $fileName=$id . '.pdf';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.jpg'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.jpg');
-            $fileName=$id . '.jpg';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.rar'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.rar');
-            $fileName=$id . '.rar';
-        } elseif (is_file(public_path('uploads/'.$type.'/' . $id . '.zip'))) {
-            $file = public_path('uploads/'.$type.'/' . $id . '.zip');
-            $fileName=$id.'.zip';
         }
-        return response()->download($file, $fileName);
+
+    }
+
+
+    public function downloadPureContract($id){
 
     }
 

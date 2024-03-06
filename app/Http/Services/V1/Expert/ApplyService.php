@@ -46,7 +46,7 @@ from `nag_user_universities`";
     public function uploadApplyFile(Request $request)
     {
         if ($request->file('file')) {
-			
+
             $folder = '/uploads/applies/'.$request->userId.'/';
             $file = $request->file('file');
 	

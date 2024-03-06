@@ -322,43 +322,43 @@ class UploadService
                 $mandatoryUploadedArray[] = $i;
             }
         }
-        $user=auth()->guard('api')->user();
-        $checkMotive=Motivation::where('user_id',$user->id)->where('url_uploaded_from_user','<>',null)->latest()->first();
-        if(isset($checkMotive)){
-            $checkMotive->url_uploaded_from_user=json_decode($checkMotive->url_uploaded_from_user, true);
-            foreach($checkMotive['url_uploaded_from_user'] as $userFile){
-                $fakeArray= [
-                    'id' => $checkMotive->id,
-                    'title' => 'انگیزه نامه',
-                    'date' => '',
-                    'url' => $userFile,
-                    'size' => '',
-                    'text' => '',
-                    'status'=>10,
-                    'mandatory' => 1,
-                    'type' => 2,
-                ];
-                array_push($mandatoryUploadArray,$fakeArray);
-            }
-        }
-        $checkResume=Resume::where('user_id',$user->id)->where('url_uploaded_from_user','<>',null)->latest()->first();
-        if(isset($checkResume)){
-            $checkResume->url_uploaded_from_user= json_decode($checkResume->url_uploaded_from_user, true);
-            foreach($checkResume['url_uploaded_from_user'] as $userFile){
-                $fakeArray= [
-                    'id' => $checkMotive->id,
-                    'title' => 'انگیزه نامه',
-                    'date' => '',
-                    'url' => $userFile,
-                    'size' => '',
-                    'status'=>10,
-                    'text' => '',
-                    'mandatory' => 1,
-                    'type' => 2,
-                ];
-                array_push($mandatoryUploadArray,$fakeArray);
-            }
-        }
+//        $user=auth()->guard('api')->user();
+//        $checkMotive=Motivation::where('user_id',$user->id)->where('url_uploaded_from_user','<>',null)->latest()->first();
+//        if(isset($checkMotive)){
+//            $checkMotive->url_uploaded_from_user=json_decode($checkMotive->url_uploaded_from_user, true);
+//            foreach($checkMotive['url_uploaded_from_user'] as $userFile){
+//                $fakeArray= [
+//                    'id' => $checkMotive->id,
+//                    'title' => 'انگیزه نامه',
+//                    'date' => '',
+//                    'url' => $userFile,
+//                    'size' => '',
+//                    'text' => '',
+//                    'status'=>10,
+//                    'mandatory' => 1,
+//                    'type' => 2,
+//                ];
+//                array_push($mandatoryUploadArray,$fakeArray);
+//            }
+//        }
+//        $checkResume=Resume::where('user_id',$user->id)->where('url_uploaded_from_user','<>',null)->latest()->first();
+//        if(isset($checkResume)){
+//            $checkResume->url_uploaded_from_user= json_decode($checkResume->url_uploaded_from_user, true);
+//            foreach($checkResume['url_uploaded_from_user'] as $userFile){
+//                $fakeArray= [
+//                    'id' => $checkMotive->id,
+//                    'title' => 'انگیزه نامه',
+//                    'date' => '',
+//                    'url' => $userFile,
+//                    'size' => '',
+//                    'status'=>10,
+//                    'text' => '',
+//                    'mandatory' => 1,
+//                    'type' => 2,
+//                ];
+//                array_push($mandatoryUploadArray,$fakeArray);
+//            }
+//        }
 
         return [$mandatoryUploadArray, $mandatoryUploadedArray, $uploadArray, $loop, $contract, $uploadTitles,$admittanceFor];
     }

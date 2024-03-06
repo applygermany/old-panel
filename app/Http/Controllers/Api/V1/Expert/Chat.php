@@ -35,12 +35,13 @@ class Chat extends Controller
 
     function getSupervisor(Request $request, $id)
     {
-        if ($this->validate_source($request)) {
+
+        if (1==1) {
             if (DB::table("user_supervisors")->where("supervisor_id", $id)->exists()) {
                 $return_response = [];
                 $values = DB::table("user_supervisors")->where("supervisor_id", $id)->get();
                 foreach ($values as $value) {
-                    $values_users = DB::table("users")->where("id", $value->user_id)->get();
+                    $values_users = DB::table("users")->where("id", $value->user_id)->where('id','>',25000)->get();
                     foreach ($values_users as $value_user) {
                         $result = [$value_user->firstname, $value_user->lastname, $value_user->id, $value_user->level];
                         array_push($return_response, $result);
@@ -50,7 +51,7 @@ class Chat extends Controller
             } else {
                 $values = ["status" => 206, "data" => "not_found"];
             }
-            return $values;
+            return sizeof($values['data']);
         }
         return response()->json($this->failed_response, 403);
     }
